@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import NodeMediaServer from 'node-media-server';
 import _ from 'lodash';
 import fs from 'fs';
+import path from 'path';
 
 @Injectable()
 export class LiveService {
@@ -26,9 +27,8 @@ export class LiveService {
       //   // cert: './cert.pem',
       // },
       trans: {
-        
         ffmpeg: '/usr/bin/ffmpeg',
-          //'/Users/82104/Downloads/ffmpeg-7.0.1-essentials_build/ffmpeg-7.0.1-essentials_build/bin/ffmpeg.exe',
+        //'/Users/82104/Downloads/ffmpeg-7.0.1-essentials_build/ffmpeg-7.0.1-essentials_build/bin/ffmpeg.exe',
         tasks: [
           {
             app: 'live',
@@ -68,66 +68,56 @@ export class LiveService {
       },
     );
 
-    // 방송 종료 시 s3에 업로드
-    // this.nodeMediaServer.on(
-    //   'donePublish',
-    //   async (id: string, streamPath: string) => {
-    //     const streamKey = streamPath.split('/live/')[1];
-    //     const live = await this.liveRepository.findOne({
-    //       where: { streamKey },
-    //     });
+    // 방송 종료 시
+    this.nodeMediaServer.on(
+      'donePublish',
+      async (id: string, streamPath: string) => {
+        const streamKey = streamPath.split('/live/')[1];
+        // const live = await this.liveRepository.findOne({
+        //   where: { streamKey },
+        // });
 
-    //     const liveDirectory = path.join(
-    //       __dirname,
-    //       '../../../live-streaming/live',
-    //       streamKey,
-    //     );
-    //     console.log(`Reading directory: ${liveDirectory}`);
+        const liveDirectory = path.join(
+          __dirname,
+          '../../../live-streaming/live',
+          streamKey,
+        );
+        console.log(`Reading directory: ${liveDirectory}`);
 
-    //     if (!fs.existsSync(liveDirectory)) {
-    //       console.error('Live directory does not exist:', liveDirectory);
-    //       return;
-    //     }
+        if (!fs.existsSync(liveDirectory)) {
+          console.error('Live directory does not exist:', liveDirectory);
+          return;
+        }
 
-    //     const files = fs.readdirSync(liveDirectory);
-    //     console.log('Files in directory:', files);
+        const files = fs.readdirSync(liveDirectory);
+        console.log('Files in directory:', files);
 
-    //     const fileName = files.find((file) => path.extname(file) === '.mp4');
+        const fileName = files.find((file) => path.extname(file) === '.mp4');
 
-    //     if (!fileName) {
-    //       console.error('No .mp4 file found in directory:', liveDirectory);
-    //       return;
-    //     }
+        if (!fileName) {
+          console.error('No .mp4 file found in directory:', liveDirectory);
+          return;
+        }
 
-    //     const filePath = path.join(liveDirectory, fileName);
-    //     console.log('Reading file:', filePath);
+        const filePath = path.join(liveDirectory, fileName);
+        console.log('Reading file:', filePath);
 
-    //     try {
-    //       const file = fs.readFileSync(filePath);
-    //       const liveVideoUrl = await this.liveRecordingToS3(fileName, file, 'mp4');
-    //       await this.cleanupStreamFolder(streamKey);
-    //       await this.liveRepository.update(
-    //         { liveId: live.liveId },
-    //         { liveVideoUrl },
-    //       );
-    //     } catch (error) {
-    //       console.error('Error handling live stream file:', error);
-    //     }
-    //   },
-    // );
+        await this.cleanupStreamFolder();
+      },
+    );
   }
 
-//   async cleanupStreamFolder(streamKey: string) {
-//     // const folderPath = './media';
-//     // console.log('folderPath: ' + folderPath);
-//     // if (fs.existsSync(folderPath)) {
-//     //   for (const file of fs.readdirSync(folderPath)) {
-//     //     const curPath = path.join(folderPath, file);
-//     //     fs.unlinkSync(curPath);
-//     //   }
-//     //   fs.rmdirSync(folderPath);
-//     // }
-//   }
+    async cleanupStreamFolder() {
+      const folderPath = './media';
+      console.log('folderPath: ' + folderPath);
+      if (fs.existsSync(folderPath)) {
+        for (const file of fs.readdirSync(folderPath)) {
+          const curPath = path.join(folderPath, file);
+          fs.unlinkSync(curPath);
+        }
+        fs.rmdirSync(folderPath);
+      }
+    }
 
   async createLive() {
     // userId로 커뮤니티아티인지 확인 + 어느 커뮤니티인지 조회
