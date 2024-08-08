@@ -110,7 +110,9 @@ export class LiveService {
     async cleanupStreamFolder() {
       const folderPath = '../../media';
       console.log('folderPath: ' + folderPath);
+      console.log(fs.readdirSync(folderPath));
       if (fs.existsSync(folderPath)) {
+        console.log("---------")
         for (const file of fs.readdirSync(folderPath)) {
           const curPath = path.join(folderPath, file);
           fs.unlinkSync(curPath);
