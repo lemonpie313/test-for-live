@@ -19,6 +19,7 @@ export class LiveService {
       http: {
         port: 8000,
         mediaroot: './media',
+        webroot: './www',
         allow_origin: '*',
       },
       // https: {
