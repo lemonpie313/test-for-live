@@ -79,7 +79,7 @@ export class LiveService {
 
         const liveDirectory = path.join(
           __dirname,
-          './media/live',
+          '../../media/live',
           streamKey,
         );
         console.log(`Reading directory: ${liveDirectory}`);
@@ -108,7 +108,7 @@ export class LiveService {
   }
 
     async cleanupStreamFolder() {
-      const folderPath = './media';
+      const folderPath = '../../media';
       console.log('folderPath: ' + folderPath);
       if (fs.existsSync(folderPath)) {
         for (const file of fs.readdirSync(folderPath)) {
