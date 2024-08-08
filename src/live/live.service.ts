@@ -79,7 +79,7 @@ export class LiveService {
 
         const liveDirectory = path.join(
           __dirname,
-          '../../../live-streaming/live',
+          './media/live',
           streamKey,
         );
         console.log(`Reading directory: ${liveDirectory}`);
