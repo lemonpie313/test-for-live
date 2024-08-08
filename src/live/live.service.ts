@@ -102,13 +102,17 @@ export class LiveService {
         const filePath = path.join(liveDirectory, fileName);
         console.log('Reading file:', filePath);
 
-        await this.cleanupStreamFolder();
+        await this.cleanupStreamFolder(streamKey);
       },
     );
   }
 
-    async cleanupStreamFolder() {
-      const folderPath = '../../media';
+    async cleanupStreamFolder(streamKey: string) {
+      const folderPath = path.join(
+        __dirname,
+        '../../media/live',
+        streamKey,
+      );
       console.log('folderPath: ' + folderPath);
       console.log(fs.readdirSync(folderPath));
       if (fs.existsSync(folderPath)) {
