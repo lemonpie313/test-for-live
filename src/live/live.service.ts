@@ -28,8 +28,8 @@ export class LiveService {
       //   // cert: './cert.pem',
       // },
       trans: {
-        ffmpeg: '/usr/bin/ffmpeg',
-        //'/Users/82104/Downloads/ffmpeg-7.0.1-essentials_build/ffmpeg-7.0.1-essentials_build/bin/ffmpeg.exe',
+        ffmpeg: //'/usr/bin/ffmpeg',
+        '/Users/82104/Downloads/ffmpeg-7.0.1-essentials_build/ffmpeg-7.0.1-essentials_build/bin/ffmpeg.exe',
         tasks: [
           {
             app: 'live',
@@ -37,8 +37,8 @@ export class LiveService {
             hls: true,
             hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
             hlsKeep: true, // to prevent hls file delete after end the stream
-            dash: true,
-            dashFlags: '[f=dash:window_size=3:extra_window_size=5]',
+            //dash: true,
+            //dashFlags: '[f=dash:window_size=3:extra_window_size=5]',
           },
           {
             app: 'live',
@@ -53,7 +53,6 @@ export class LiveService {
 
   onModuleInit() {
     // 서버 실행하면서 미디어서버도 같이 실행
-    this.nodeMediaServer.run();
 
     this.nodeMediaServer.on(
       'prePublish',
@@ -74,6 +73,7 @@ export class LiveService {
     this.nodeMediaServer.on(
       'donePublish',
       async (id: string, streamPath: string) => {
+        console.log("-----------")
         const streamKey = streamPath.split('/live/')[1];
         // const live = await this.liveRepository.findOne({
         //   where: { streamKey },
@@ -107,6 +107,8 @@ export class LiveService {
         await this.cleanupStreamFolder(streamKey);
       },
     );
+
+    this.nodeMediaServer.run();
   }
 
     async cleanupStreamFolder(streamKey: string) {
