@@ -62,6 +62,7 @@ export class LiveService {
         );
         const session = this.nodeMediaServer.getSession(id);
         const streamKey = streamPath.split('/live/')[1];
+        console.log("------streamPath: "+streamPath);
 
         console.log('------------------------방송시작?------------------');
         console.log('id: ' + id);
