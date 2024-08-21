@@ -33,12 +33,28 @@ export class LiveService {
         tasks: [
           {
             app: 'live',
-            ac: 'aac', 
+            vc: 'libx264', // x264 비디오 코덱 사용 (H.264는 인코딩 시 그래픽카드의 GPU 사용 > 사양 좋아야함.. x264는 CPU 사용)
+            vcParam: [
+              '-crf',
+              '18', // CRF 값 (인코딩시 사용되는 품질 기준값, 18은 거의 무손실, 23은 기본값)
+              '-preset',
+              'slow', // 인코딩 프리셋 (한 프레임을 만드는 데에 얼마나 CPU 자원을 사용할지, 느려질수록 같은 비트레이트에서 더 나은  품질)
+              '-b:v',
+              '4M', // 비디오스트림 비트레이트 (초당 비트 전송률, 즉 1초당 용량, 4M는 4 Mbps)
+              '-maxrate',
+              '4M', // 최대 비트레이트
+              '-bufsize',
+              '8M', // 버퍼(임시 저장공간?) 사이즈 (8MB)
+            ],
+            ac: 'aac',
+            acParam: ['-ab', '64k', '-ac', '1', '-ar', '44100'],
             hls: true,
             hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-            hlsKeep: true, // to prevent hls file delete after end the stream
-            //dash: true,
-            //dashFlags: '[f=dash:window_size=3:extra_window_size=5]',
+            // hlsKeep: true, // to prevent hls file delete after end the stream
+            // ffmpegParams: '-loglevel debug -report', // FFmpeg 로그 기록
+            // dash: true,
+            // dashFlags: '[f=dash:window_size=3:extra_window_size=5]',
+            // dashKeep: true, // to prevent dash file delete after end the stream
           },
           {
             app: 'live',
